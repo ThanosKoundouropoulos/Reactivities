@@ -1,18 +1,13 @@
-import React, { SyntheticEvent, useState } from 'react';
-import { Button, Grid, Item, Label, List, Segment } from 'semantic-ui-react';
-import { Activity } from '../../../app/layout/models/activity';
+import { SyntheticEvent, useState } from 'react';
+import { Button, Item, Label, Segment } from 'semantic-ui-react';
+import { useStore } from '../../../app/layout/stores/store';
+import { observer } from 'mobx-react-lite';
 
-interface Props{
-    activities: Activity[];
-    selectActivity: (id: string) => void;
-    deleteActivity: (id: string)    => void;
-    submitting: boolean;
 
-}
 
-export default function ActivityList({activities,selectActivity,deleteActivity,submitting}: Props){
-   
-
+export default observer(function ActivityList(){
+    const {activityStore} = useStore();
+    const {deleteActivity,activitiesByDate,loading} = activityStore;
     const [target ,setTarget] = useState('');
 
     function handleActivityDelete(e:SyntheticEvent<HTMLButtonElement> , id: string){
@@ -20,13 +15,13 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
         deleteActivity(id);
     }
    
-   
+
    
    
     return(
        <Segment>
             <Item.Group divided>
-                {activities.map(activity =>(
+                {activitiesByDate.map(activity =>(
                     //we give a key to show react thsoe are unique items
                     <Item key={activity.id}>
                         <Item.Content>
@@ -38,11 +33,11 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
                             </Item.Description>
                             <Item.Extra>
                                 { /* we wrap the onclick in am arrow function so it doesnt execut when the button is render but when we press it */}
-                                <Button onClick={() => selectActivity(activity.id)} floated='right' content='View' color='blue'/>
+                                <Button onClick={() => activityStore.selectActivity(activity.id)} floated='right' content='View' color='blue'/>
                                 <Button 
                                 //we macth a button with the activity so the loading animation happesn individualy
                                     name={activity.id}
-                                    loading={submitting && target === activity.id} 
+                                    loading={loading && target === activity.id} 
                                     onClick={(e) => handleActivityDelete(e,activity.id)} 
                                     floated='right' 
                                     content='Delete' 
@@ -58,4 +53,4 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
             </Item.Group>
        </Segment>
     )
-}
+})

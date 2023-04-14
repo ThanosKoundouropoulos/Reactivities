@@ -1,28 +1,36 @@
 import { Grid } from 'semantic-ui-react';
-import ActivityForm from '../form/ActivityForm';
 import ActivityList from './ActivityList';
-import ActivityDetails from './details/ActivityDetails';
 import { useStore } from '../../../app/layout/stores/store';
 import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
 
 
 
 export default observer(function ActivityDashboard(){
     
-        const {activityStore} = useStore();
-        const {selectedActivity, editMode} = activityStore;
+  const {activityStore} = useStore();
+
+  const {loadActivities,activityRegistry} = activityStore;
+        
+
+  useEffect(() => {
+    if (activityRegistry.size ===0) loadActivities();
+  }, [loadActivities, activityRegistry.size])
+
+  
+
+  if (activityStore.loadingInitial) return <LoadingComponent content='Loading app'/>
+
+        
+        
         return(
         <Grid>
             <Grid.Column width='10'>
                 <ActivityList />
             </Grid.Column>
             <Grid.Column width='6'>
-                {/* Den theloume ta details otan eiamste se edit mode */}
-                {selectedActivity && !editMode &&
-                <ActivityDetails />}
-                {/*we only want to display activity form if we are in edit mode */}
-                {editMode &&
-                <ActivityForm />}
+              <h2 >Activity Filters</h2>
             </Grid.Column>
         </Grid>
     )

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Button,  Label,  Segment } from 'semantic-ui-react';
+import { Button,  Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/layout/models/activity';
 import { useStore } from '../../../app/layout/stores/store';
 import { observer } from 'mobx-react-lite';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
-import { Formik ,Form, ErrorMessage} from 'formik';
+import { Formik ,Form} from 'formik';
 import * as Yup from 'yup';
-import { error } from 'console';
+import {v4 as uuid} from 'uuid';
 import MyTextInput from '../../../app/common/form/MyTextInput';
 import MyTextArea from '../../../app/common/form/MyTextArea';
 import MySelectInput from '../../../app/common/form/MySelectImput';
@@ -49,7 +49,7 @@ export default observer( function ActivityForm(){
     //init state is either the selected activity we pass or the properties in an activity object
     //?? if left is null use right as initial state
     
-   /* function handleSubmit(){
+   function handleSubmit(){
         if (!activity.id) {
             activity.id = uuid();
             createActivity(activity).then(() => navigate(`/activities/${activity.id}`));
@@ -58,10 +58,7 @@ export default observer( function ActivityForm(){
         }
     }
 
-    function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>){
-        const {name ,value} = event.target;
-        setActivity({...activity, [name]: value})
-    }*/
+   
 
     if (loadingInitial) return <LoadingComponent content='Loading activity...'/>
     return(
@@ -81,7 +78,7 @@ export default observer( function ActivityForm(){
                                 name='date' 
                                 showTimeSelect
                                 timeCaption='time'
-                                dateFormat='MMMM d, yyyy h:mm aa'
+                                dateFormat='dd MMM yyyy'
                                 />
                             <MyTextInput placeholder='City'  name='city' />
                             <MyTextInput placeholder='Venue'  name='venue' />

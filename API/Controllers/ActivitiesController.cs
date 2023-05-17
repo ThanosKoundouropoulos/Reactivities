@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Application.Activities;
 using Application;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
+    [AllowAnonymous]
     public class ActivitiesController : BaseApiController
     {
     

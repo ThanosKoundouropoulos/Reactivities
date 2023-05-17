@@ -3,7 +3,8 @@ import { Activity } from "../models/activity";
 import agent from "../api/agent";
 import {v4 as uuid} from 'uuid';
 
-import {  format, getTime } from 'date-fns'
+import {  getTime, parseISO } from 'date-fns'
+import format from 'date-fns/format'
 
 //this is an activity store 
 export default class ActivityStore{
@@ -33,7 +34,12 @@ export default class ActivityStore{
     get groupedActivities(){
         return Object.entries(
             this.activitiesByDate.reduce((activities, activity) =>{
-                const date = format( activity.date!, 'dd MMM yyyy');
+                console.log("activity.date");
+              
+                console.log('date');
+    
+                const date = format(activity.date!, 'yyyy-MM-dd');
+                console.log(date);
                 activities[date] = activities[date] ? [...activities[date],activity] : [activity];
                 
                 
@@ -49,7 +55,7 @@ export default class ActivityStore{
         try {
             const activities = await agent.Activities.list();
             activities.forEach(activity =>{
-                this.activityRegistry.set(activity.id,activity);
+                this.setActivity(activity);
                 console.log(activity.date);
               })
               this.setLoadingInitial(false);

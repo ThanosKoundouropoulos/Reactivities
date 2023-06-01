@@ -1,8 +1,10 @@
 using Application.Activities;
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application
@@ -28,26 +30,38 @@ namespace Application
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _context.Users.FirstOrDefaultAsync(x =>
+                    x.UserName == _userAccessor.GetUsername());
+
+                var attendee = new ActivityAttendee
+                {
+                    AppUser = user,
+                    Activity = request.Activity,
+                    IsHost = true
+                };
+                request.Activity.Attendees.Add(attendee);
                 //then xreiazetai async giati den peirazoume thn vash
                 //to framework apla parakolouthei oti vazoume ena activity sto context sthn mnhmh
                 _context.Activities.Add(request.Activity);
 
                 //edw pou kanei save sthn bash xreiazetai async
-                var result = await _context.SaveChangesAsync() >0;
+                var result = await _context.SaveChangesAsync() > 0;
 
                 //to comamnd nthen epistrefei kati alla to handle epistrefei ena task type unit
                 //vazoume unit value to opoio den einai tipota 
                 //apla kserei etsi o API controller oti  ginetai mesa sto handler teleiwse
-                
-                if(!result) return Result<Unit>.Failure("Failed to create activity");
-                
+
+                if (!result) return Result<Unit>.Failure("Failed to create activity");
+
                 return Result<Unit>.Success(Unit.Value);
 
             }

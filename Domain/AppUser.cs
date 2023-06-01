@@ -6,5 +6,6 @@ namespace Domain
     {
         public String DisplayName { get; set; }
         public String Bio { get; set; }
+        public ICollection<ActivityAttendee> Activities { get; set; }
     }
 }

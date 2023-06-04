@@ -1,14 +1,10 @@
-using Domain;
-
-namespace Application.Profiles
+namespace Application.Activities
 {
-    public class Profile
+    public class AttendeeDto
     {
         public String Username { get; set; }
         public String DisplayName { get; set; }
         public String Bio { get; set; }
         public String Image { get; set; }
-        public ICollection<Photo> Photos { get; set; }
-
     }
 }

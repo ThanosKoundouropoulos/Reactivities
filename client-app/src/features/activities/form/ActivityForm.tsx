@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Button,  Segment } from 'semantic-ui-react';
-import { Activity } from '../../../app/layout/models/activity';
+import { Button,  Header,  Segment } from 'semantic-ui-react';
+import { Activity, ActivityFormValues } from '../../../app/layout/models/activity';
 import { useStore } from '../../../app/layout/stores/store';
 import { observer } from 'mobx-react-lite';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -23,15 +23,7 @@ export default observer( function ActivityForm(){
 
     const {id} = useParams();
     const navigate = useNavigate();
-    const [activity,setActivity] = useState<Activity>({
-        id: '',
-        title: '',
-        category: '',
-        description: '',
-        date: null,
-        city: '',
-        venue: '',
-    })
+    const [activity,setActivity] = useState<ActivityFormValues>(new ActivityFormValues)
 
     const validationSchema = Yup.object({
         title: Yup.string().required('The activity title is required'),
@@ -43,13 +35,13 @@ export default observer( function ActivityForm(){
     })
 
     useEffect(() => {
-        if (id) loadActivity(id).then(activity => setActivity(activity!))
+        if (id) loadActivity(id).then(activity => setActivity(new ActivityFormValues(activity)))
     }, [id ,loadActivity]);
     //display the content of this ability in the form if it is available
     //init state is either the selected activity we pass or the properties in an activity object
     //?? if left is null use right as initial state
     
-   function handleSubmit(){
+   function handleFormSubmit(activity: ActivityFormValues){
         if (!activity.id) {
             activity.id = uuid();
             createActivity(activity).then(() => navigate(`/activities/${activity.id}`));
@@ -63,12 +55,13 @@ export default observer( function ActivityForm(){
     if (loadingInitial) return <LoadingComponent content='Loading activity...'/>
     return(
         <Segment clearing>
+            <Header content='Activity Details' sub color='teal'/>
             <Formik 
                 validationSchema={validationSchema}
                 enableReinitialize 
                 initialValues={activity} 
-                onSubmit={values => console.log(values)}>
-                    { ({ values: activity, handleChange, handleSubmit}) =>(
+                onSubmit={values => handleFormSubmit(values)}>
+                    {({handleSubmit,isValid,isSubmitting,dirty}) =>(
                        <Form className='ui form' onSubmit={handleSubmit} autoComplete='off' >
                             <MyTextInput name='title' placeholder='Title'/>
                             <MyTextArea rows={3} placeholder='Description'  name='description' />
@@ -80,10 +73,14 @@ export default observer( function ActivityForm(){
                                 timeCaption='time'
                                 dateFormat='dd MMM yyyy'
                                 />
+                                <Header content='Location Details' sub color='teal'/>
                             <MyTextInput placeholder='City'  name='city' />
                             <MyTextInput placeholder='Venue'  name='venue' />
-                        <Button loading={loading} floated='right' positive type='submit' content='Submit'/>
-                        <Button as={Link}  to='/activities' floated='right'  type='button' content='Cancel'/>
+                            <Button 
+                                disabled={isSubmitting || !dirty || !isValid}
+                                loading={isSubmitting} floated='right' 
+                                positive type='submit' content='Submit'/>
+                            <Button as={Link}  to='/activities' floated='right'  type='button' content='Cancel'/>
                         </Form>
                 )}
 

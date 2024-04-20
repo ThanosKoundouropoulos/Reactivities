@@ -32,6 +32,22 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
+
+                    //get the token from the query string of the signalr connection
+                    //and add the token to the http  context and get it from anywhere
+                     opt.Events = new JwtBearerEvents
+                     {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                     };
                 });
             services.AddAuthorization(opt =>
             {

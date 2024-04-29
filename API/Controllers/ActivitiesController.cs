@@ -1,28 +1,22 @@
 using Domain;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 using Application.Activities;
 using Application;
 using Microsoft.AspNetCore.Authorization;
+using Application.Core;
 
 namespace API.Controllers
 {
- 
+
     public class ActivitiesController : BaseApiController
     {
     
         //xrhsimopoiw ton mediator gia ta querys
     
-        [HttpGet] //api/activities
-        public async Task<IActionResult> GetActivities()
+        [HttpGet]
+        public async Task<IActionResult> GetActivities([FromQuery] ActivityParams param)
         {
-            //xrhsimopoiw ton mediator gia to quer anti gia apeytheias :_context.Activities.ToListAsync();
-            //Mediator anti gia _mediator dld auton pou exei o base controller
-            return HandleResult(await Mediator.Send(new List.Query()));
-            //prin omws to testarw preipei na valw ton mediator san service sto programm class
-            
+            return HandlePagedResult(await Mediator.Send(new List.Query { Params = param }));
         }
 
        

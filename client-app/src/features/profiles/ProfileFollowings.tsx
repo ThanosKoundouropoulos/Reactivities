@@ -1,4 +1,4 @@
-import {Tab, Grid, Header, Card, TabPane} from "semantic-ui-react";
+import { Grid, Header, Card, TabPane} from "semantic-ui-react";
 import ProfileCard from "./ProfileCard";
 
 import { observer } from 'mobx-react-lite';

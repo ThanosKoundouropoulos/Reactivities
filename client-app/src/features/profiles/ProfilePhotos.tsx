@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Card, Header, TabPane ,Image, Grid, GridColumn, Button } from "semantic-ui-react";
+import { Card, Header, TabPane ,Image, Grid, Button } from "semantic-ui-react";
 import { Photo, Profile } from "../../app/layout/models/profile";
 import { useStore } from "../../app/layout/stores/store";
 import { SyntheticEvent, useState } from "react";

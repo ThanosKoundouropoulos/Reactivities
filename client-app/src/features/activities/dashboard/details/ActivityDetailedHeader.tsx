@@ -1,10 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react'
 import {Button, Header, Item, Segment, Image, Label} from 'semantic-ui-react'
 import { Activity } from '../../../../app/layout/models/activity';
 import { Link } from 'react-router-dom';
 import {format} from 'date-fns';
-import ActivityStore from '../../../../app/layout/stores/activityStore';
 import { useStore } from '../../../../app/layout/stores/store';
 
 

@@ -1,10 +1,8 @@
 import { ErrorMessage, Form, Formik } from "formik";
-import { values } from "mobx";
 import MyTextInput from "../../app/common/form/MyTextInput";
 import { Button, Header, Label } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/layout/stores/store";
-import { error } from "console";
 
 
 export default observer(function LoginForm(){
@@ -12,7 +10,7 @@ export default observer(function LoginForm(){
     return(
         <Formik
             initialValues={{email:'', password:'',error: null}}
-            onSubmit={(values, {setErrors}) => userStore.login(values).catch(error =>
+            onSubmit={(values, {setErrors}) => userStore.login(values).catch(_error =>
                 setErrors({error: 'invalid'}))}
         >
             {({handleSubmit, isSubmitting,errors}) => (

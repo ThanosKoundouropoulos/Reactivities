@@ -16,7 +16,7 @@ RUN dotnet restore "Reactivities.sln"
 COPY . .
 WORKDIR /app
 RUN dotnet publish -c Release -o out
-
+ENV ASPNETCORE_ENVIRONMENT=Development
 # build a runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app

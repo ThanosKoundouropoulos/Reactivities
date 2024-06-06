@@ -26,20 +26,33 @@ namespace API.Extensions
             services.AddDbContext<DataContext>(options =>
             {
                 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                 Console.WriteLine($"Environment: {env}");
+                if (env == null)
+                {
+                    throw new Exception("ASPNETCORE_ENVIRONMENT is not set");
+                }
 
                 string connStr;
 
-                // Depending on if in development or production, use either FlyIO
-                // connection string, or development connection string from env var.
                 if (env == "Development")
                 {
                     // Use connection string from file.
                     connStr = config.GetConnectionString("DefaultConnection");
+                    Console.WriteLine($"Development Connection String: {connStr}");
+                    if (connStr == null)
+                    {
+                        throw new Exception("DefaultConnection is not set in configuration");
+                    }
                 }
                 else
                 {
                     // Use connection string provided at runtime by FlyIO.
                     var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                    Console.WriteLine($"Connection URL: {connUrl}");
+                    if (connUrl == null)
+                    {
+                        throw new Exception("DATABASE_URL environment variable is not set");
+                    }
 
                     // Parse connection URL to connection string for Npgsql
                     connUrl = connUrl.Replace("postgres://", string.Empty);
@@ -51,16 +64,14 @@ namespace API.Extensions
                     var pgPass = pgUserPass.Split(":")[1];
                     var pgHost = pgHostPort.Split(":")[0];
                     var pgPort = pgHostPort.Split(":")[1];
-                var updatedHost = pgHost.Replace("flycast", "internal");
+                    var updatedHost = pgHost.Replace("flycast", "internal");
 
                     connStr = $"Server={updatedHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+                    Console.WriteLine($"Production Connection String: {connStr}");
                 }
 
-                // Whether the connection string came from the local development configuration file
-                // or from the environment variable from FlyIO, use it to set up your DbContext.
                 options.UseNpgsql(connStr);
             });
-
             services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", policy =>
